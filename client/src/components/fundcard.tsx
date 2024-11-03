@@ -1,5 +1,6 @@
 import React from 'react';
 import { tagType, thirdweb } from '../assets';
+import { BigNumber } from 'ethers';
 
 // Define the types for the props
 interface FundCardProps {

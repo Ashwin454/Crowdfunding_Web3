@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStateContext } from '../context';
 import { DisplayCampaigns } from '../components';
+import { BigNumber } from 'ethers';
 
 interface ParsedCampaign {
     owner: string;

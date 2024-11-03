@@ -36,7 +36,7 @@ const CreateCampaign: React.FC = () => {
         try {
             setLoading(true);
             // Convert target to BigNumber before passing to createCampaign
-            await createCampaign({ ...formData }); // Adjusting target to pass BigNumber
+            await createCampaign({ ...formData, deadline: parseInt(formData.deadline) }); // Adjusting target to pass BigNumber
         } catch (error) {
             console.error("Error creating campaign:", error);
         } finally {

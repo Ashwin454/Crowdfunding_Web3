@@ -1,13 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import Loader from "./loader";
 import FundCard from "./fundcard";
+import { BigNumber } from "ethers";
 
 interface ParsedCampaign {
     owner: string;
     title: string;
     description: string;
     target: string; // Formatted as string (ether)
-    deadline: string | Date; // Converted to a number
+    deadline: number; // Converted to a number
     amountCollected: string; // Formatted as string (ether)
     image: string;
     pid: number; // Index

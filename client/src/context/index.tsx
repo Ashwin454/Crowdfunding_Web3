@@ -7,12 +7,12 @@ interface CampaignForm {
     title: string;
     description: string;
     target: string;
-    deadline: string | Date;
+    deadline: number;
     image: string;
 }
 interface Data {
     donators: string[]; // Array of addresses (strings)
-    donations: (number | BigNumber)[]; // Array of donation amounts, as BigNumber instances
+    donations: BigNumber[]; // Array of donation amounts, as BigNumber instances
 }
 
 // Define the type for a campaign fetched from the contract
@@ -21,7 +21,7 @@ interface Campaign {
     title: string;
     description: string;
     target: BigNumber; // Assuming target is a BigNumber from ethers.js
-    deadline: BigNumber; // Assuming deadline is also a BigNumber
+    deadline: number; // Assuming deadline is also a BigNumber
     amountCollected: BigNumber; // Assuming this is also a BigNumber
     image: string;
 }
@@ -46,7 +46,7 @@ interface StateContextType {
     createCampaign: (form: CampaignForm) => Promise<void>;
     getCampaigns: () => Promise<ParsedCampaign[]>; // Specify return type as a promise of ParsedCampaign array
     donate: (pId: number, amount: string) => Promise<Omit<{ receipt: ethers.providers.TransactionReceipt; data: () => Promise<unknown>; }, "data"> | undefined>; // Update the return type here
-    getDons: (pId: number) => Object
+    getDons: (pId: number) => Promise<Data | null>
 }
 
 
@@ -98,7 +98,7 @@ export const StateProvider: React.FC<StateProviderProps> = ({ children }) => {
             title: campaign.title,
             description: campaign.description,
             target: ethers.utils.formatEther(campaign.target.toString()),
-            deadline: campaign.deadline.toNumber(),
+            deadline: campaign.deadline,
             amountCollected: ethers.utils.formatEther(campaign.amountCollected.toString()),
             image: campaign.image,
             pid: i
@@ -137,11 +137,12 @@ export const StateProvider: React.FC<StateProviderProps> = ({ children }) => {
     const getDons = async (pId: number): Promise<Data | null> => {
         try {
             const [donatorsData, donationsData]: [string[], BigNumber[]] = await contract?.call('getDonators', [pId]);
-    
+            
             console.log(donatorsData, donationsData);
     
-            const donators: string[] = donatorsData; // Assuming donatorsData is already a string array
-            const donations: (number | BigNumber)[] = donationsData.map(donation => donation.toNumber()); // Convert BigNumber to number if necessary
+            // Assuming donatorsData is an array of strings and donationsData is an array of BigNumbers
+            const donators: string[] = donatorsData;
+            const donations: BigNumber[] = donationsData;
     
             return {
                 donators,
@@ -149,10 +150,10 @@ export const StateProvider: React.FC<StateProviderProps> = ({ children }) => {
             };
         } catch (error) {
             console.error('Error fetching donators:', error);
-            return null; // Ensure you return null in case of an error
+            return null;
         }
     };
-        
+            
 
     
     return (
